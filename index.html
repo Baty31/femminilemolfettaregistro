@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Femminile Molfetta Registro</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+body{font-family:Arial;margin:0;background:#f4f4f4}
+header{background:#c40000;color:white;padding:16px;text-align:center}
+.container{padding:16px;max-width:600px;margin:auto}
+input,button{padding:10px;font-size:16px;margin:4px}
+.card{background:white;padding:12px;margin-top:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center}
+.present{background:#4CAF50;color:white}
+.absent{background:#e53935;color:white}
+button{border:none;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+<h2>Femminile Molfetta Registro</h2>
+</header>
+
+<div class="container">
+
+<input id="nameInput" placeholder="Nome giocatrice">
+<button onclick="addPerson()">Aggiungi</button>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+let people = JSON.parse(localStorage.getItem("fm_people") || "[]")
+
+function save(){
+localStorage.setItem("fm_people",JSON.stringify(people))
+render()
+}
+
+function addPerson(){
+let name=document.getElementById("nameInput").value
+if(!name) return
+people.push({name:name,present:null})
+document.getElementById("nameInput").value=""
+save()
+}
+
+function setPresence(i,val){
+people[i].present=val
+save()
+}
+
+function removePerson(i){
+people.splice(i,1)
+save()
+}
+
+function render(){
+let list=document.getElementById("list")
+list.innerHTML=""
+people.forEach((p,i)=>{
+let div=document.createElement("div")
+div.className="card"
+
+div.innerHTML=`
+<span>${p.name}</span>
+<div>
+<button class="present" onclick="setPresence(${i},true)">✔</button>
+<button class="absent" onclick="setPresence(${i},false)">✖</button>
+<button onclick="removePerson(${i})">🗑</button>
+</div>
+`
+list.appendChild(div)
+})
+}
+
+render()
+</script>
+
+</body>
+</html>
